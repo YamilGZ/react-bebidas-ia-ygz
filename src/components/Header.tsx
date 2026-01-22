@@ -9,6 +9,8 @@ export default function Header() {
         category: ''
     })
 
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
     const {pathname} = useLocation()
     
     const isHome = useMemo(() => pathname === '/' ,  [pathname])
@@ -21,6 +23,10 @@ export default function Header() {
     useEffect(() => {
         fetchCategories()
     }, [fetchCategories]);
+
+    useEffect(() => {
+        setIsMobileMenuOpen(false)
+    }, [pathname])
 
     const handleChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) => {
         setSearchFilters({
@@ -48,17 +54,18 @@ export default function Header() {
 
   return (
     <header className={ isHome ? ' bg-[url(/bg.jpg)] bg-center bg-cover' : 'bg-slate-800'}>
-        <div className=" mx-auto container px-5 py-16">
+        <div className=" mx-auto container px-4 sm:px-5 py-8 sm:py-16">
             <div className=" flex justify-between items-center">
                 <div>
                     <img 
                         src="/logo.svg" 
                         alt="logotipo"
-                        className="w-32" 
+                        className="w-24 sm:w-32" 
                     />
                 </div>
 
-                <nav className=" flex gap-4">
+                {/* Menú Desktop */}
+                <nav className="hidden md:flex gap-4">
                     <NavLink 
                         to="/"
                         className={({isActive}) => 
@@ -81,11 +88,60 @@ export default function Header() {
                     >
                         Generar con IA</NavLink>
                 </nav>
+
+                {/* Botón Menú Móvil */}
+                <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="md:hidden text-white p-2"
+                    aria-label="Toggle menu"
+                >
+                    <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        strokeWidth="1.5" 
+                        stroke="currentColor" 
+                        className="w-6 h-6"
+                    >
+                        {isMobileMenuOpen ? (
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        ) : (
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                        )}
+                    </svg>
+                </button>
             </div>
+
+            {/* Menú Móvil */}
+            {isMobileMenuOpen && (
+                <nav className="md:hidden mt-4 flex flex-col gap-3 pb-4">
+                    <NavLink 
+                        to="/"
+                        className={({isActive}) => 
+                            isActive ? 'text-orange-500 uppercase font-bold py-2' : 'text-white uppercase font-bold py-2'
+                        }
+                    >
+                    Inicio</NavLink>
+                    <NavLink 
+                        to="/favoritos"
+                        className={({isActive}) => 
+                            isActive ? 'text-orange-500 uppercase font-bold py-2' : 'text-white uppercase font-bold py-2'
+                        }
+                    >
+                        Favoritos</NavLink>
+                    <NavLink 
+                        to="/generate"
+                        className={({isActive}) => 
+                            isActive ? 'text-orange-500 uppercase font-bold py-2' : 'text-white uppercase font-bold py-2'
+                        }
+                    >
+                        Generar con IA</NavLink>
+                </nav>
+            )}
             <div>
                 {isHome && (
                     <form
-                        className=" md:w-1/2 2xl:w-1/3 bg-orange-400 my-32 p-10 rounded-lg shadow space-y-6"
+                        className=" md:w-1/2 2xl:w-1/3 bg-orange-400 my-10 sm:my-16 md:my-32 p-6 sm:p-8 md:p-10 rounded-lg shadow space-y-4 sm:space-y-6"
                         onSubmit={handleSubmit}
                     >
                         <div className=" space-y-4 mt-2" >
